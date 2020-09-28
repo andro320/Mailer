@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log in</title>
+</head>
+<body>
+    <form>
+        <div>
+            <label>Mail:</label><br>
+            <input type="text" id="mail" autofocus>
+        </div>
+        <div>
+            <label>Password:</label><br>
+            <input type="password" id="pass">
+        </div>
+<!--        <input type="submit" value="add Item">-->
+        <button type="submit">Log in</button>
+    </form>
+    <script>
+        const electron = require('electron');
+        const {ipcRenderer} = electron;
+
+        const form = document.querySelector('form');
+        const mail = document.getElementById('mail');
+        const pass = document.getElementById('pass');
+        form.addEventListener('submit', submitForm);
+
+        function submitForm(e){
+            e.preventDefault();
+            console.log(e);
+            ipcRenderer.send('item:add', mail.value+":"+pass.value);
+        }
+    </script>
+</body>
+</html>

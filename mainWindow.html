@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mass Mail Sender by Andro320</title>
+    <style>
+        *{
+            font-family: sans-serif;
+            background-color: #25282F;
+            color: #FEDA6A;
+            box-sizing: border-box;
+            /* margin: 0 10px; */
+            padding: 0;
+            transition: all 0.5s;
+        }
+        h1{
+            text-align: center;
+            height: 4vh;
+        }
+        h1, h2, h3{
+            color: #D4D4DC;
+        }
+        textarea{
+          display: block;
+          margin: 1vh 3% 3vh;
+          padding: 10px;
+          border: #FEDA6A solid 3px;
+          border-radius: 5px;
+          padding: 10px;
+        }
+        h2{
+          padding: 0;
+          margin: 2vh 2% 0;
+          height: 4vh;
+        }
+        #subject{
+          width: 94%;
+          height: 8vh;
+        }
+        #message{
+            width: 94%;
+            height: 20vh;
+        }
+        #list{
+            width: 94%;
+            height: 27vh;
+        }
+        button{
+            display: block;
+            text-align: center;
+            width: 94%;
+            margin: 3vh 3%;
+            height: 4vh;
+            border: #FEDA6A solid 3px;
+            border-radius: 5px;
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+        button:hover{
+            background-color: #FEDA6A;
+            color: #25282F;
+        }
+
+
+    </style>
+</head>
+<body>
+    <h1>Mass Mail Sender</h1>
+    <form>
+        <h2>Subject:</h2>
+        <textarea id="subject" placeholder="Add your subject here."></textarea>
+
+        <h2>Message:</h2>
+        <textarea id="message" placeholder="Add your message here."></textarea>
+
+        <h2>Mail list:</h2>
+        <textarea id="list" placeholder="Add your list here."></textarea>
+
+    </form>
+    <div id="log">
+
+    </div>
+    <button id="start">Start sending</button>
+
+    <script>
+        const electron = require('electron');
+        const {ipcRenderer} = electron;
+        const subject = document.querySelector('#subject');
+        const message = document.querySelector('#message');
+        const list = document.getElementById('list');
+        const button = document.getElementById('start');
+        const style = document.querySelector('style');
+        const log = document.getElementById('log');
+        const logstyle= `
+        #log{
+          margin: 1vh 3% 3vh;
+          height: 75vh;
+          border: #FEDA6A solid 3px;
+          color: #FEDA6A;
+          border-radius: 5px;
+          padding: 10px;
+          overflow-y: auto;
+        }
+        form{
+          height: 0vh;
+          overflow: hidden;
+        }
+        `;
+
+        button.addEventListener("click", start);
+        let mail;
+        let pass;
+        ipcRenderer.on('item:add', function (e, cred){
+            mail = cred.split(":")[0];
+            pass = cred.split(":")[1];
+            // console.log(mail+" "+pass);
+        });
+        ipcRenderer.on('item:clear', function (){
+            message.value = "";
+            list.value = "";
+        });
+        function start() {
+          if (button.innerHTML == "Start sending") {startSending();}
+          else{stopSending();}
+        }
+        function startSending(){
+          // console.log(mail+"   "+pass);
+          // console.log(message.value+"   "+list.value);
+          ipcRenderer.send('start', [mail, pass, message.value, subject.value, list.value]);
+          button.innerHTML = "Stop sending";
+          style.innerHTML += logstyle;
+          ipcRenderer.on('log:add', function (e, logs){
+            log.innerHTML += logs+"<br>";
+          });
+        }
+        function stopSending() {
+          style.innerHTML = style.innerHTML.replace(logstyle, "")
+          button.innerHTML = "Start sending";
+          log.innerHTML = "";
+        }
+    </script>
+</body>
+</html>

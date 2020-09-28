@@ -1,0 +1,25 @@
+{
+  "name": "testapp",
+  "version": "1.0.0",
+  "description": "test",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "build"
+  },
+  "author": "Andrew",
+  "license": "MIT",
+  "dependencies": {
+    "nodemailer": "^6.4.11"
+  },
+  "build": {
+    "appId": "com.andro.quickstart",
+    "win": {
+      "target": "portable",
+      "icon": "build/icon.ico"
+    }
+  },
+  "devDependencies": {
+    "electron-builder": "^22.8.1"
+  }
+}
